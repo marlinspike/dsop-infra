@@ -12,9 +12,6 @@ provider "azurerm" {
   environment = var.environment
 }
 
-// azure-security-benchmark-foundation
-data "azurerm_client_config" "current" {}
-
 data "azurerm_subscription" "current" {}
 
 locals {
@@ -23,14 +20,13 @@ locals {
 }
 
 resource "azurerm_resource_group" "base_blueprint" {
-  name     = "${var.prefix}-base-blueprint"
+  name     = "${var.prefix}-${var.spoke_name}-rg"
   location = var.location
 }
 
 resource "azurerm_role_definition" "azbf" {
-  role_definition_id = "5269e321-b006-72a2-d7ef-3122e1f9f7a0"
-  name               = "azbf-blueprint-role"
-  scope              = local.subscription_id
+  name  = "azbf-blueprint-role-${var.spoke_name}"
+  scope = local.subscription_id
 
   permissions {
     actions     = ["Microsoft.Authorization/locks/write"]
@@ -78,7 +74,7 @@ resource "azurerm_role_assignment" "contributor" {
 }
 
 resource "azurerm_blueprint_assignment" "azbf" {
-  name                   = "${var.prefix}azbf-assigment"
+  name                   = "${var.prefix}-${var.spoke_name}-azbf-assigment"
   target_subscription_id = local.subscription_id
   version_id             = data.azurerm_blueprint_published_version.azbf.id
   location               = var.location
@@ -94,10 +90,10 @@ resource "azurerm_blueprint_assignment" "azbf" {
             "value": "${var.prefix}"
         },
         "hubName": {
-            "value": "env-hub"
+            "value": "hub"
         },
         "deployHub": {
-            "value": true
+            "value": ${var.deploy_hub}
         },
         "hub-shared-network-firewall_azureFirewallPrivateIP": {
             "value": "10.0.0.4"
@@ -139,23 +135,19 @@ resource "azurerm_blueprint_assignment" "azbf" {
             "value": "${local.nw_location}"
         },
         "spokeName": {
-            "value": "spoke-rke2"
+            "value": "${var.spoke_name}"
         },
         "spoke-workload-network-vnet_spokeVnetAddressPrefix": {
-            "value": "10.1.0.0/16"
+            "value": "${var.spoke_vnet_range}"
         },
         "spoke-workload-network-vnet_spokeSubnetAddressPrefix": {
-            "value": "10.1.0.0/24"
+            "value": "${var.spoke_subnet_range}"
         },
         "spoke-workload-network-vnet_spokeOptionalSubnetNames": {
-            "value": [
-                "cluster"
-            ]
+            "value": []
         },
         "spoke-workload-network-vnet_spokeOptionalSubnetPrefixes": {
-            "value": [
-                "10.1.16.0/20"
-            ]
+            "value": []
         },
         "deploySpoke": {
             "value": true

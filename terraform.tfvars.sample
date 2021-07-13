@@ -1,0 +1,6 @@
+nw_location        = "usgovvirginia"
+prefix             = "dsop"
+spoke_name         = "dev"
+spoke_vnet_range   = "10.1.0.0/16"
+spoke_subnet_range = "10.1.0.0/20"
+deploy_hub         = false
