@@ -46,7 +46,7 @@ data "azurerm_blueprint_definition" "azbf" {
 data "azurerm_blueprint_published_version" "azbf" {
   scope_id       = data.azurerm_blueprint_definition.azbf.scope_id
   blueprint_name = data.azurerm_blueprint_definition.azbf.name
-  version        = "1.1"
+  version        = "1.1-nosc"
 }
 
 resource "azurerm_user_assigned_identity" "id" {
