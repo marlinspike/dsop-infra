@@ -46,13 +46,13 @@ data "azurerm_blueprint_definition" "azbf" {
 data "azurerm_blueprint_published_version" "azbf" {
   scope_id       = data.azurerm_blueprint_definition.azbf.scope_id
   blueprint_name = data.azurerm_blueprint_definition.azbf.name
-  version        = "1.0"
+  version        = "1.1"
 }
 
 resource "azurerm_user_assigned_identity" "id" {
   resource_group_name = azurerm_resource_group.base_blueprint.name
   location            = var.location
-  name                = "${var.prefix}-user-identity"
+  name                = "${var.prefix}-${var.spoke_name}-user-identity"
 }
 
 resource "azurerm_role_assignment" "operator" {

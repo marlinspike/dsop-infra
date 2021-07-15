@@ -1,0 +1,134 @@
+parameters:
+  - name: prefix
+    displayName: Hub name 
+    type: string
+    default: dsop
+
+  - name: deploy_hub
+    displayName: Deploy Hub?
+    type: boolean
+    default: false
+
+  - name: spoke_name
+    displayName: Name of new spoke
+    type: string
+    default: demo
+
+  - name: spoke_vnet_range
+    displayName: Network address space
+    type: string
+    default: 10.1.0.0/16
+
+  - name: spoke_subnet_range
+    displayName: Subnet range for spoke
+    type: string
+    default: 10.1.0.0/20
+
+trigger:
+  - main
+
+variables:
+  - group: "dsop_variables"
+
+  # terraform backend configuration
+  - name: tf_backend_rg
+    value: dsop-core-rg
+  - name: tf_backend_container_name
+    value: tfstate
+  - name: tf_backend_storage_account
+    value: dsopcorestorage
+  - name: tf_backend_environment
+    value: usgovernment
+
+  # really don't want to change this as there is one NetworkWatcherRG per subscription
+  - name: nw_location
+    value: usgovvirginia
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: TerraformInstaller@0
+    inputs:
+      terraformVersion: "1.0.2"
+
+  # Copy backend config file to root directory
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: "$(Build.SourcesDirectory)/.azdo"
+      contents: "backend_override.tf"
+      targetFolder: $(Build.SourcesDirectory)
+
+  - task: Bash@3
+    displayName: Dump parameters and variables
+    enabled: false
+    inputs:
+      targetType: 'inline'
+      script: |
+        echo 'parameters.prefix............:${{ parameters.prefix }}'
+        echo 'parameters.deploy_hub........:${{ lower(parameters.deploy_hub) }}'
+        echo 'parameters.spoke_name........:${{ parameters.spoke_name }}'
+        echo 'parameters.spoke_vnet_range..:${{ parameters.spoke_vnet_range }}'
+        echo 'parameters.spoke_subnet_range:${{ parameters.spoke_subnet_range }}'
+        echo 'Build.SourcesDirectory.......:$(Build.SourcesDirectory)'
+
+  - task: AzureCLI@2
+    displayName: Terraform Init
+    enabled: true
+    inputs:
+      azureSubscription: "dsop-spn-root"
+      scriptType: "bash"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        az --version
+        export ARM_CLIENT_ID=$(spnClientID)
+        export ARM_CLIENT_SECRET=$(spnClientSecret)
+        export ARM_TENANT_ID=$(tenantID)
+        export ARM_SUBSCRIPTION_ID=$(subscriptionID)
+        terraform init \
+          -backend-config=environment=${{ variables.tf_backend_environment }} \
+          -backend-config=storage_account_name=${{ variables.tf_backend_storage_account }} \
+          -backend-config=container_name=${{ variables.tf_backend_container_name }} \
+          -backend-config=key=${{ parameters.prefix }}-${{ parameters.spoke_name }}.tfstate \
+          -backend-config=resource_group_name=${{ variables.tf_backend_rg }} \
+          -backend-config=subscription_id=$(subscriptionID) \
+          -backend-config=tenant_id=$(tenantID) \
+          -backend-config=client_id=$(spnClientID) \
+          -backend-config=client_secret=$(spnClientSecret)
+
+  - task: AzureCLI@2
+    displayName: Terraform Plan
+    enabled: true
+    inputs:
+      azureSubscription: "dsop-spn-root"
+      scriptType: "bash"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        az --version
+        export ARM_CLIENT_ID=$(spnClientID)
+        export ARM_CLIENT_SECRET=$(spnClientSecret)
+        export ARM_TENANT_ID=$(tenantID)
+        export ARM_SUBSCRIPTION_ID=$(subscriptionID)
+        terraform plan \
+          -out=my.tfplan \
+          -var 'nw_location=${{ variables.nw_location }}' \
+          -var 'prefix=${{ parameters.prefix }}' \
+          -var 'spoke_name=${{ parameters.spoke_name }}' \
+          -var 'spoke_vnet_range=${{ parameters.spoke_vnet_range }}' \
+          -var 'spoke_subnet_range=${{ parameters.spoke_subnet_range }}' \
+          -var 'deploy_hub=${{ lower(parameters.deploy_hub) }}'
+
+  - task: AzureCLI@2
+    displayName: Terraform Apply
+    enabled: true
+    inputs:
+      azureSubscription: "dsop-spn-root"
+      scriptType: "bash"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        az --version
+        export ARM_CLIENT_ID=$(spnClientID)
+        export ARM_CLIENT_SECRET=$(spnClientSecret)
+        export ARM_TENANT_ID=$(tenantID)
+        export ARM_SUBSCRIPTION_ID=$(subscriptionID)
+        terraform apply my.tfplan
