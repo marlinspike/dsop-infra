@@ -10,7 +10,7 @@ variable "environment" {
 
 variable "location" {
   type    = string
-  default = "usgovarizona"
+  default = "usgovvirginia"
 }
 
 variable "subscription_id" {
