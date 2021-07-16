@@ -129,7 +129,7 @@ resource "azurerm_blueprint_assignment" "azbf" {
             "value": []
         },
         "enableDdosProtection": {
-            "value": false
+            "value": ${var.ddos_protection}
         },
         "networkWatcherResourceGroupLocation": {
             "value": "${local.nw_location}"
@@ -150,7 +150,7 @@ resource "azurerm_blueprint_assignment" "azbf" {
             "value": []
         },
         "deploySpoke": {
-            "value": true
+            "value": ${var.deploy_spoke}
         },
         "hubLocation": {
             "value" : "${var.location}"

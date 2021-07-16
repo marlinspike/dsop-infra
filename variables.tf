@@ -39,3 +39,13 @@ variable "spoke_vnet_range" {
 variable "spoke_subnet_range" {
   type = string
 }
+
+variable "deploy_spoke" {
+  type    = bool
+  default = true
+}
+
+variable "ddos_protection" {
+  type    = bool
+  default = false
+}
