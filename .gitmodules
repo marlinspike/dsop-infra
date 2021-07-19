@@ -1,0 +1,3 @@
+[submodule "dsop-rke2"]
+	path = dsop-rke2
+	url = https://azure-ecosystem.visualstudio.com/Azure%20Gov%20Engineering/_git/dsop-rke2
