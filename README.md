@@ -26,18 +26,40 @@ If you want to update the version that you have in the submodule you need to ent
 The initilization of the submodule it is required since the rke2 module does reference the  
 
 ## Installation of a Hub and its first Spoke locally
-Clone this repo. Create a `terraform.tfvars` file based on `terraform.tfvars.sample` and change the values of the spoke_* variables to the values of the spoke you want. Ensure deploy_hub = true.  
+Clone this repo. Create a `terraform.tfvars` file based on `terraform.tfvars.sample` and change the values of the spoke_* variables and the value of the cluster_* variables to the values of the spoke you want. Ensure `deploy_hub = true`.  
 
 After that execute `terraform init` followed by `terraform apply`.  
 
 ## Installation of another Spoke locally
-Same as above, but set deploy_hub = false.
+Same as above, but set `deploy_hub = false`.
+
+## Sample of a terraform.vars file
+
+```ini
+nw_location            = "usgovvirginia"
+prefix                 = "dsop"
+spoke_name             = "retro"
+spoke_vnet_range       = "10.59.0.0/16"
+spoke_subnet_range     = "10.59.0.0/20"
+cluster_subnet_cidr    = "10.59.16.0/20"
+deploy_hub             = false
+server_open_ssh_public = true
+server_public_ip       = true
+```
+
+## Connecting to the Rke2 cluster
+
+After you run the terraform you need to source the script `fetch-kubeconfig.sh` from the dsop-rke2 folder
+
+```bash
+source ./dsop-rke2/scripts/fetch-kubeconfig.sh
+```
 
 ## Installing a Hub and its first Spoke using the pipeline
-Run pipeline DSOP/dsop-infra with your desired hub prefix and spoke details. Ensure you set deploy_hub = true.
+Run pipeline DSOP/dsop-infra with your desired hub prefix and spoke details. Ensure you set `deploy_hub = true`.
 
 ## Installing a new spoke using the pipeline
-Run pipeline DSOP/dsop-infra with the correct hub prefix (dsop) and desired spoke details. Ensure you set deploy_hub = false, i.e. don't check the box.  
+Run pipeline DSOP/dsop-infra with the correct hub prefix (dsop) and desired spoke details. Ensure you set `deploy_hub = false`, i.e. don't check the box.  
 
 ## Removing a spoke or hub
 The steps are:

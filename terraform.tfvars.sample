@@ -1,8 +1,9 @@
-nw_location         = "usgovvirginia"
-prefix              = "dsop"
-spoke_name          = "dev"
-spoke_vnet_range    = "10.1.0.0/16"
-spoke_subnet_range  = "10.1.0.0/20"
-cluster_subnet_cidr = "10.1.16.0/20"
-deploy_hub          = false
-
+nw_location            = "usgovvirginia"
+prefix                 = "dsop"
+spoke_name             = "sample"
+spoke_vnet_range       = "10.101.0.0/16"
+spoke_subnet_range     = "10.101.0.0/20"
+cluster_subnet_cidr    = "10.101.16.0/20"
+deploy_hub             = false
+server_open_ssh_public = true
+server_public_ip       = true
