@@ -1,6 +1,6 @@
 parameters:
   - name: prefix
-    displayName: Hub name 
+    displayName: Hub name
     type: string
     default: dsop
 
@@ -23,6 +23,16 @@ parameters:
     displayName: Subnet range for spoke
     type: string
     default: 10.1.0.0/20
+
+  - name: cluster_subnet_cidr
+    displayName: Cluster subnet CIDR
+    type: string
+    default: 10.1.16.0/20
+
+  - name: use_built_in_subnet
+    displayName: Use built-in subnet?
+    type: boolean
+    default: false
 
 trigger:
   - main
@@ -63,7 +73,7 @@ steps:
     displayName: Dump parameters and variables
     enabled: false
     inputs:
-      targetType: 'inline'
+      targetType: "inline"
       script: |
         echo 'parameters.prefix............:${{ parameters.prefix }}'
         echo 'parameters.deploy_hub........:${{ lower(parameters.deploy_hub) }}'
@@ -116,6 +126,9 @@ steps:
           -var 'spoke_name=${{ parameters.spoke_name }}' \
           -var 'spoke_vnet_range=${{ parameters.spoke_vnet_range }}' \
           -var 'spoke_subnet_range=${{ parameters.spoke_subnet_range }}' \
+          -var 'spoke_subnet_range=${{ parameters.spoke_subnet_range }}' \
+          -var 'cluster_subnet_cidr=${{ parameters.cluster_subnet_cidr }}' \
+          -var 'use_built_in_subnet=${{ parameters.use_built_in_subnet }}' \
           -var 'deploy_hub=${{ lower(parameters.deploy_hub) }}'
 
   - task: AzureCLI@2
