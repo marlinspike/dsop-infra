@@ -11,6 +11,20 @@ At present, only the blueprint is installed. RKE2 details coming soon.
 
 # Getting started
 
+## Cloning the repo
+
+if you havent cloned the repo yet clone it with the command
+
+- `git clone --recurse-submodules <repository url>`
+
+After you have cloned the repo you need to initialize the submodules
+
+- `git submodule update --init --recursive`
+
+If you want to update the version that you have in the submodule you need to enter in that folder after the submodule had been initilized and do a `git pull`.
+
+The initilization of the submodule it is required since the rke2 module does reference the  
+
 ## Installation of a Hub and its first Spoke locally
 Clone this repo. Create a `terraform.tfvars` file based on `terraform.tfvars.sample` and change the values of the spoke_* variables to the values of the spoke you want. Ensure deploy_hub = true.  
 
