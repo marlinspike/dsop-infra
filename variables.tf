@@ -1,3 +1,51 @@
+variable "domain_name" {
+  type        = string
+  description = "The domain name of the cluster"
+  default     = "bigbang.dev"
+}
+
+# AZURE_CLIENT_ID       = var.dns_azure_client_id
+# AZURE_CLIENT_SECRET   = var.dns_azure_client_secret
+# AZURE_SUBSCRIPTION_ID = var.dns_azure_subscription_id
+# AZURE_TENANT_ID       = var.dns_azure_tenant_id
+# AZURE_RESOURCE_GROUP  = var.dns_azure_resource_group
+
+variable "provision_dns" {
+  type        = bool
+  description = "Whether to provision DNS"
+  default     = true
+}
+
+variable "dns_azure_client_id" {
+  type        = string
+  description = "The client id of the Azure DNS service"
+  default     = ""
+}
+
+variable "dns_azure_client_secret" {
+  type        = string
+  description = "The client secret of the Azure DNS service"
+  default     = ""
+}
+
+variable "dns_azure_subscription_id" {
+  type        = string
+  description = "The subscription id of the Azure DNS service"
+  default     = ""
+}
+
+variable "dns_azure_tenant_id" {
+  type        = string
+  description = "The tenant id of the Azure DNS service"
+  default     = ""
+}
+
+variable "dns_azure_resource_group" {
+  type        = string
+  description = "The resource group of the Azure DNS service"
+  default     = ""
+}
+
 variable "prefix" {
   type    = string
   default = "dpos"
