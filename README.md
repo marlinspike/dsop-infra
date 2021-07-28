@@ -13,25 +13,35 @@ At present, only the blueprint is installed. RKE2 details coming soon.
 
 ## Cloning the repo
 
-if you havent cloned the repo yet clone it with the command
+If you havent cloned the repo yet clone it with the command
 
-- `git clone --recurse-submodules <repository url>`
+- `git clone --recurse-submodules https://azure-ecosystem.visualstudio.com/Azure%20Gov%20Engineering/_git/dsop-infra`
 
 After you have cloned the repo you need to initialize the submodules
 
 - `git submodule update --init --recursive`
 
-If you want to update the version that you have in the submodule you need to enter in that folder after the submodule had been initilized and do a `git pull`.
+*NOTE:* You will be prompted for a username and password. To create these credentials go to [https://azure-ecosystem.visualstudio.com/Azure%20Gov%20Engineering/\_git/dsop-infra](https://azure-ecosystem.visualstudio.com/Azure%20Gov%20Engineering/\_git/dsop-infra) and click on the 'Clone' button. Select HTTPS and then 'Generate Git Credentials'. Make sure you copy the password.
 
-The initilization of the submodule it is required since the rke2 module does reference the  
+If you want to update the version that you have in the submodule at a later date you need to enter in that folder after the submodule had been initilized and do a `git pull`.
 
 ## Installation of a Hub and its first Spoke locally
-Clone this repo. Create a `terraform.tfvars` file based on `terraform.tfvars.sample` and change the values of the spoke_* variables and the value of the cluster_* variables to the values of the spoke you want. Ensure `deploy_hub = true`.  
+Clone this repo. Create a `terraform.tfvars` file based on `terraform.tfvars.sample` and change the values of the spoke\_* variables and the value of the cluster\_* variables to the values of the spoke you want. Ensure `deploy_hub = true`.  
 
-After that execute `terraform init` followed by `terraform apply`.  
+NOTE: When deploying a hub you must ensure that the 'prefix' variable is unique within the subscription. The deployment will fail otherwise.
+
+After that execute `terraform init` followed by `terraform apply` in the same directory.
 
 ## Installation of another Spoke locally
-Same as above, but set `deploy_hub = false`.
+
+Same as above but:
+- Set deploy\_hub = false.
+- Ensure that for:
+- - spoke\_vnet\_range    = "10.X.0.0/16"
+- - spoke\_subnet\_range  = "10.X.0.0/20"
+- - cluster\_subnet\_cidr = "10.X.16.0/20"
+- X is unique amongst all spokes connected to the hub and the hub itself.
+
 
 ## Sample of a terraform.vars file
 
@@ -52,9 +62,8 @@ server_public_ip       = true
 After you run the terraform you need to source the script `fetch-kubeconfig.sh` from the dsop-rke2 folder
 
 ```bash
-source ./dsop-rke2/scripts/fetch-kubeconfig.sh
+./dsop-rke2/scripts/fetch-kubeconfig.sh
 ```
-
 ## Installing a Hub and its first Spoke using the pipeline
 Run pipeline DSOP/dsop-infra with your desired hub prefix and spoke details. Ensure you set `deploy_hub = true`.
 
