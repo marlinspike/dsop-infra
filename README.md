@@ -81,6 +81,23 @@ Remove spokes before removing the hub. If you don't run `terraform destroy`, som
 ## If there's a network conflict
 Each new spoke requires a vnet address space. If you select one that's already peered with the hub network, you'll get a message like this: "cannot be peered because address space of the first virtual network overlaps with address space of virtual network". Recovery requires deletion of the new tfstate file, the resource group, the role assignments and role definition. Moral of the story: carefully select the address space of the spoke vnet.
 
+
+# Troubleshooting
+
+This section describes common issues while deploying `dsop-infra` and how to fix them.
+## 1. Blueprint assignment timeout
+
+### Issue
+```bash
+Error: failed waiting for Blueprint Assignment "<prefix>-<spoke_name>-azbf-assigment" (Scope "/subscriptions/<subscription id>"): Blueprint Assignment provisioning entered a Failed state.
+ 
+    with azurerm_blueprint_assignment.azbf,
+    on main.tf line 88, in resource "azurerm_blueprint_assignment" "azbf":
+    88: resource "azurerm_blueprint_assignment" "azbf" {
+```
+### Solution
+Retry deployment by executing `terraform apply`.
+
 # Reference
 The repo deploys this blueprint [Azure Security Benchmark Foundation](https://docs.microsoft.com/en-us/azure/governance/blueprints/samples/azure-security-benchmark-foundation/)
 
