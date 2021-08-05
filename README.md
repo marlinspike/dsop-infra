@@ -13,7 +13,7 @@ At present, only the blueprint is installed. RKE2 details coming soon.
 
 ## Cloning the repo
 
-If you havent cloned the repo yet clone it with the command
+If you haven't cloned the repo yet clone it with the command
 
 - `git clone --recurse-submodules https://azure-ecosystem.visualstudio.com/Azure%20Gov%20Engineering/_git/dsop-infra`
 
@@ -26,11 +26,18 @@ After you have cloned the repo you need to initialize the submodules
 If you want to update the version that you have in the submodule at a later date you need to enter in that folder after the submodule had been initilized and do a `git pull`.
 
 ## Installation of a Hub and its first Spoke locally
-Clone this repo. Create a `terraform.tfvars` file based on `terraform.tfvars.sample` and change the values of the spoke\_* variables and the value of the cluster\_* variables to the values of the spoke you want. Ensure `deploy_hub = true`.  
+Clone this repo. Create a `terraform.tfvars` file based on `terraform.tfvars.sample` and change the following values:
+- spoke\_* variables
+- cluster\_* variables
+- CHANGE_ME values
 
-NOTE: When deploying a hub you must ensure that the 'prefix' variable is unique within the subscription. The deployment will fail otherwise.
+ Ensure `deploy_hub = true`.  
 
-After that execute `terraform init` followed by `terraform apply` in the same directory.
+*NOTE:* When deploying a hub you must ensure that the 'prefix' variable is unique within the subscription. The deployment will fail otherwise.
+
+After that execute  `terraform init` followed by `terraform apply` in the same directory.
+
+*NOTE:* If the blueprint timeouts and causes an `Error: failed waiting for Blueprint Assignment`, then unassign the assignment from [https://portal.azure.us/#blade/Microsoft_Azure_Policy/BlueprintsMenuBlade/BlueprintAssignmentsportal](Blueprints - Microsoft Azure Government) and re-run `terraform apply`.
 
 ## Installation of another Spoke locally
 
